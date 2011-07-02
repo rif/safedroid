@@ -42,10 +42,6 @@ public class WebService {
 			}
 		}
 
-		// HttpContext context = new BasicHttpContext();
-		// context.setAttribute(ClientContext.COOKIE_STORE,
-		// httpclient.getCookieStore());
-
 		HttpGet httpget = new HttpGet(
 				"http://portal.safefleet.eu/safefleet/webservice/get_companies/");
 
