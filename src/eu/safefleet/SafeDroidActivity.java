@@ -22,14 +22,11 @@ public class SafeDroidActivity extends Activity {
 			e.printStackTrace();
 		}
 		Button startButton = (Button) findViewById(R.id.startButton);
-		final Intent listIntent = new Intent(this, CarListActivity.class);
 		startButton.setOnClickListener(new OnClickListener() {
-
 			public void onClick(View v) {
-				startActivityForResult(listIntent, 0);
+				Intent listIntent = new Intent(getApplicationContext(), CarListActivity.class);
+				startActivity(listIntent);
 			}
 		});
-		// Intent mapIntent = new Intent(this, GoogleMapsActivity.class);
-		// startActivity(mapIntent);
 	}
 }

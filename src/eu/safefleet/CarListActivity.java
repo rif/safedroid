@@ -1,6 +1,7 @@
 package eu.safefleet;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,8 +28,9 @@ public class CarListActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// When clicked, show a toast with the TextView text
-				Toast.makeText(getApplicationContext(),
-						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+				Intent mapIntent = new Intent(getApplicationContext(), GoogleMapsActivity.class);
+				startActivity(mapIntent);
 			}
 		});
 	}
