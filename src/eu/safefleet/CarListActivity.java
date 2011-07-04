@@ -8,8 +8,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class CarListActivity extends ListActivity {
 	@Override
@@ -28,8 +26,10 @@ public class CarListActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// When clicked, show a toast with the TextView text
-				//Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-				Intent mapIntent = new Intent(getApplicationContext(), GoogleMapsActivity.class);
+				// Toast.makeText(getApplicationContext(), ((TextView)
+				// view).getText(), Toast.LENGTH_SHORT).show();
+				Intent mapIntent = new Intent(getApplicationContext(),
+						GoogleMapsActivity.class);
 				startActivity(mapIntent);
 			}
 		});
