@@ -19,7 +19,9 @@ public class SafeDroidActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Intent i = new Intent(this, GoogleMapsActivity.class);
-		//startActivity(i);
+		Intent listIntent = new Intent(this, CarListActivity.class);
+		startActivity(listIntent);
+		// Intent mapIntent = new Intent(this, GoogleMapsActivity.class);
+		// startActivity(mapIntent);
 	}
 }

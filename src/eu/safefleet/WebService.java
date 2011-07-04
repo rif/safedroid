@@ -20,6 +20,7 @@ public class WebService {
 	}
 
 	public void start() throws Exception {
+		tw.append("\nStarting...\n");
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 
 		HttpPost httpost = new HttpPost(
