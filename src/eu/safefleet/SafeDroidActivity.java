@@ -3,6 +3,9 @@ package eu.safefleet;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class SafeDroidActivity extends Activity {
@@ -16,11 +19,16 @@ public class SafeDroidActivity extends Activity {
 		try {
 			ws.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Intent listIntent = new Intent(this, CarListActivity.class);
-		startActivity(listIntent);
+		Button startButton = (Button) findViewById(R.id.startButton);
+		final Intent listIntent = new Intent(this, CarListActivity.class);
+		startButton.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				startActivityForResult(listIntent, 0);
+			}
+		});
 		// Intent mapIntent = new Intent(this, GoogleMapsActivity.class);
 		// startActivity(mapIntent);
 	}
