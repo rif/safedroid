@@ -16,10 +16,9 @@
 		android:singleLine="true" android:layout_height="wrap_content"
 		android:background="@android:drawable/editbox_background"
 		android:layout_below="@id/passwordlabel" />
-	<Button android:id="@+id/loginbutton" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_below="@id/passwordentry"
+	<Button android:id="@+id/loginbutton" android:layout_height="wrap_content" android:layout_below="@id/passwordentry"
 		android:layout_alignParentRight="true" android:layout_marginLeft="10dip"
-		android:text="@string/login" />
+		android:text="@string/login" android:layout_width="100dip"/>
 	<CheckBox android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:id="@+id/rememberBox"
 		android:layout_toLeftOf="@+id/loginbutton" android:text="@string/remember"
