@@ -5,17 +5,21 @@ import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 
+import utils.Dialogs;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class CarListActivity extends ListActivity {
+	private Handler handler = null;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,24 +40,48 @@ public class CarListActivity extends ListActivity {
 				startActivity(mapIntent);
 			}
 		});
+		handler = new Handler();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		try {
-			List<String> carList = WebService.getInstance().getCars();
-			if (carList.isEmpty()) {
-				Intent mapIntent = new Intent(getApplicationContext(),
-						LoginActivity.class);
-				startActivity(mapIntent);
+		final ProgressDialog dialog = ProgressDialog.show(CarListActivity.this,
+				"", "Loading. Please wait...", true);
+		Runnable runnable = new Runnable() {
+			public void run() {
+				try {
+					List<String> carList = WebService.getInstance().getCars();
+					if (carList.isEmpty()) {
+						// connected to server but could not obtain result: must
+						// login
+						Intent mapIntent = new Intent(getApplicationContext(),
+								LoginActivity.class);
+						startActivity(mapIntent);
+					}
+				} catch (ClientProtocolException e) {
+					handler.post(new Runnable() {
+						public void run() {
+							Dialogs.showExitRety(CarListActivity.this,
+									R.string.servererror);
+						}
+					});
+
+				} catch (IOException e) {
+					handler.post(new Runnable() {
+						public void run() {
+							Dialogs.showExitRety(CarListActivity.this,
+									R.string.nointernet);
+						}
+					});
+				}
+				handler.post(new Runnable() {
+					public void run() {
+						dialog.dismiss();
+					}
+				});
 			}
-		} catch (ClientProtocolException e) {
-			Toast.makeText(getApplicationContext(), R.string.servererror,
-					Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			Toast.makeText(getApplicationContext(), R.string.nointernet,
-					Toast.LENGTH_SHORT).show();
-		}
+		};
+		new Thread(runnable).start();
 	}
 }
