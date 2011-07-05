@@ -47,7 +47,7 @@ public class WebService {
 	}
 
 	public List<String> getCars() throws ClientProtocolException, IOException {
-		HttpGet httpget = new HttpGet(SERVER + "/get_companies/");
+		HttpGet httpget = new HttpGet(SERVER + "/get_fleets/");
 
 		List<Cookie> cookies = httpclient.getCookieStore().getCookies();
 		if (!cookies.isEmpty()) {

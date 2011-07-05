@@ -68,6 +68,9 @@ public class LoginActivity extends Activity {
 								userEdit.getText().toString(),
 								passwordEdit.getText().toString());
 						resultText.setText(success?R.string.loginsuccessful:R.string.loginfailed);
+						if (success){
+							finish();
+						}
 					} catch (ClientProtocolException e) {
 						resultText.setText(R.string.servererror);
 					} catch (IOException e) {

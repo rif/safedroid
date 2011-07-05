@@ -31,14 +31,16 @@ public class CarListActivity extends ListActivity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// When clicked, show a toast with the TextView text
-				// Toast.makeText(getApplicationContext(), ((TextView)
-				// view).getText(), Toast.LENGTH_SHORT).show();
 				Intent mapIntent = new Intent(getApplicationContext(),
 						GoogleMapsActivity.class);
 				startActivity(mapIntent);
 			}
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 		try {
 			List<String> carList = WebService.getInstance().getCars();
 			if (carList.isEmpty()) {
