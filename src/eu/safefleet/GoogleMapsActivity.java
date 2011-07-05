@@ -30,7 +30,7 @@ public class GoogleMapsActivity extends MapActivity {
 		GeoPoint point = new GeoPoint(19240000, -99120000);
 		OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!",
 				"I'm in Mexico City!");
-		itemizedoverlay.addOverlay(overlayitem);
+		itemizedoverlay.setCarOverlay(overlayitem);
 		mapOverlays.add(itemizedoverlay);
 	}
 }

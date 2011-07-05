@@ -1,7 +1,5 @@
 package eu.safefleet;
 
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -9,8 +7,8 @@ import android.graphics.drawable.Drawable;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.OverlayItem;
 
-public class CarsOverlay extends ItemizedOverlay {
-	private ArrayList<OverlayItem> cars = new ArrayList<OverlayItem>();
+public class CarsOverlay extends ItemizedOverlay<OverlayItem> {
+	private OverlayItem carOverlay = null;
 	private Context mContext = null;
 
 	public CarsOverlay(Drawable defaultMarker) {
@@ -24,22 +22,22 @@ public class CarsOverlay extends ItemizedOverlay {
 
 	@Override
 	protected OverlayItem createItem(int i) {
-		return cars.get(i);
+		return carOverlay;
 	}
 
 	@Override
 	public int size() {
-		return cars.size();
+		return 1;
 	}
 
-	public void addOverlay(OverlayItem overlay) {
-		cars.add(overlay);
+	public void setCarOverlay(OverlayItem overlay) {
+		carOverlay = overlay;
 		populate();
 	}
 
 	@Override
 	protected boolean onTap(int index) {
-		OverlayItem item = cars.get(index);
+		OverlayItem item = carOverlay;
 		AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
 		dialog.setTitle(item.getTitle());
 		dialog.setMessage(item.getSnippet());
