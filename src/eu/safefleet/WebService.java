@@ -52,22 +52,7 @@ public class WebService {
 		HttpGet httpget = new HttpGet(SERVER + "/get_vehicles/");
 
 		HttpResponse response = httpclient.execute(httpget);
-		HttpEntity entity = response.getEntity();
-
-		// Pull content stream from response
-		InputStream inputStream = entity.getContent();
-
-		ByteArrayOutputStream content = new ByteArrayOutputStream();
-
-		// Read response into a buffered stream
-		int readBytes = 0;
-		byte[] sBuffer = new byte[512];
-		while ((readBytes = inputStream.read(sBuffer)) != -1) {
-			content.write(sBuffer, 0, readBytes);
-		}
-
-		// Return result from buffered stream
-		String dataAsString = new String(content.toByteArray());
+		String dataAsString = getResponseAsString(response);
 		// Load the requested page converted to a string into a JSONObject.
 		JSONArray result = null;
 		try {
@@ -75,14 +60,39 @@ public class WebService {
 					+ "}");
 
 			result = respJson.getJSONArray("result");
-			// Close the stream.
-			inputStream.close();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		return result;
+	}
+
+	public JSONObject get_vehicle_dynamic_info(String vehicleId)
+			throws ClientProtocolException, IOException, JSONException {
+		HttpGet httpget = new HttpGet(SERVER + "/get_vehicle_dynamic_info/?vehicle_id=" + vehicleId);
+
+		HttpResponse response = httpclient.execute(httpget);
+		String dataAsString = getResponseAsString(response);
+		// Load the requested page converted to a string into a JSONObject.
+		return new JSONObject(dataAsString);
+	}
+	
+	private String getResponseAsString(HttpResponse response) throws IOException{
+		HttpEntity entity = response.getEntity();
+
+		InputStream inputStream = entity.getContent();
+		ByteArrayOutputStream content = new ByteArrayOutputStream();
+		int readBytes = 0;
+		byte[] sBuffer = new byte[512];
+		while ((readBytes = inputStream.read(sBuffer)) != -1) {
+			content.write(sBuffer, 0, readBytes);
+		}
+		// Close the stream.
+		inputStream.close();
 		if (entity != null) {
 			entity.consumeContent();
 		}
-		return result;
+		
+		// Return result from buffered stream
+		return new String(content.toByteArray());
 	}
 }

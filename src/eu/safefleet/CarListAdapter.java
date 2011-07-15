@@ -1,5 +1,8 @@
 package eu.safefleet;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,13 +61,25 @@ class CarListAdapter extends BaseAdapter {
 				if (numberView != null) {
 					numberView.setText(o.getString("name"));
 				}
-				if (locationView != null) {
-					locationView.setText("Location: " + "Arad");
-				}
 
-				if (statusView != null) {
-					statusView.setText("Status: " + "Parked");
+				try {
+					JSONObject vehicle_dynamic_info = WebService.getInstance().get_vehicle_dynamic_info(o.getString("vehicle_id"));
+					if (locationView != null) {
+						locationView.setText("Location: " + vehicle_dynamic_info.getString("lat"));
+					}
+
+					if (statusView != null) {
+						statusView.setText("Speed: " + vehicle_dynamic_info.getString("speed") + "km/h");
+					}
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+				
+				
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
