@@ -81,57 +81,6 @@ public class LoginActivity extends Activity {
 		});
 	}
 
-	public void test() throws Exception {
-		resultText.append("\nStarting...\n");
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-
-		HttpPost httpost = new HttpPost(
-				"http://portal.safefleet.eu/safefleet/webservice/authenticate/?username="
-						+ userEdit.getText() + "&password="
-						+ passwordEdit.getText());
-
-		HttpResponse response = httpclient.execute(httpost);
-		HttpEntity entity = response.getEntity();
-
-		resultText.append("\nLogin form get: " + response.getStatusLine());
-		if (entity != null) {
-			entity.consumeContent();
-		}
-		resultText.append("\nCookies:");
-		List<Cookie> cookies = httpclient.getCookieStore().getCookies();
-		if (cookies.isEmpty()) {
-			resultText.append("\nNone");
-		} else {
-			for (int i = 0; i < cookies.size(); i++) {
-				resultText.append("\n- " + cookies.get(i).toString());
-			}
-		}
-
-		HttpGet httpget = new HttpGet(
-				"http://portal.safefleet.eu/safefleet/webservice/get_vehicles/");
-
-		Cookie c = httpclient.getCookieStore().getCookies().get(0);
-		httpget.setHeader("Cookie", c.getName() + "=" + c.getValue());
-		resultText.append("\nrequest: " + httpget.getRequestLine());
-		resultText.append("\nheaders: ");
-		for (Header h : httpget.getAllHeaders()) {
-			resultText.append("\n-" + h.toString());
-		}
-
-		response = httpclient.execute(httpget);
-		entity = response.getEntity();
-
-		resultText.append("\nresponse: " + response.getStatusLine());
-		if (entity != null) {
-			entity.consumeContent();
-		}
-
-		// When HttpClient instance is no longer needed,
-		// shut down the connection manager to ensure
-		// immediate deallocation of all system resources
-		httpclient.getConnectionManager().shutdown();
-	}
-
 	private void saveCredentials() {
 		if (rememberCheck.isChecked()) {
 			Log.d(TAG, "Saving credential");

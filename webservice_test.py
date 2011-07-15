@@ -21,7 +21,10 @@ response,content = http.request("http://portal.safefleet.eu/safefleet/webservice
 print "get_companies response:"
 arr =  json.loads(content)
 for obj in arr:
-	print obj
+    print obj
+    r,c = http.request("http://portal.safefleet.eu/safefleet/webservice/get_vehicle_dynamic_info/?vehicle_id=" + str(obj['vehicle_id']), headers=headers)
+    a =  json.loads(c)
+    print a
 print '-'*100
 
 # urllib2 opener test

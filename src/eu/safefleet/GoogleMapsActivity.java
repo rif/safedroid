@@ -16,6 +16,8 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 public class GoogleMapsActivity extends MapActivity {
+	private static final int ZOOM_LEVEL = 16;
+
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
@@ -26,7 +28,7 @@ public class GoogleMapsActivity extends MapActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map);
 		MapView mapView = (MapView) findViewById(R.id.mapview);
-		mapView.getController().setZoom(18);
+		mapView.getController().setZoom(ZOOM_LEVEL);
 		mapView.setBuiltInZoomControls(true);
 		List<Overlay> mapOverlays = mapView.getOverlays();
 		Drawable drawable = this.getResources().getDrawable(

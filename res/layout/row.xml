@@ -23,7 +23,7 @@
 			android:text="@string/speed" android:textSize="13sp"
 			android:layout_marginRight="3dip"></TextView>
 		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="Mail" android:id="@+id/carSpeed"
+			android:layout_height="wrap_content" android:id="@+id/carSpeed"
 			android:textSize="13sp" android:layout_weight="1"></TextView>
 	</LinearLayout>
 </LinearLayout> 

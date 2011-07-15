@@ -15,10 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 public class WebService {
-	private static final String TAG = "WebService";
+	//private static final String TAG = "WebService";
 	private static final String SERVER = "http://portal.safefleet.eu/safefleet/webservice";
 	public static final int RESPONSE_OK = 200;
 	private DefaultHttpClient httpclient = null;
@@ -45,7 +43,7 @@ public class WebService {
 		if (entity != null) {
 			entity.consumeContent();
 		}
-		Log.d(TAG, response.getStatusLine().toString());
+		// Log.d(TAG, response.getStatusLine().toString());
 		return response.getStatusLine().getStatusCode() == (RESPONSE_OK);
 	}
 
@@ -61,11 +59,12 @@ public class WebService {
 			JSONObject respJson = new JSONObject("{'result' :" + dataAsString
 					+ "}");
 
-			JSONArray result = respJson.getJSONArray("result");
-			for (int i = 0; i < result.length(); i++) {
-				CarInfo info = WebService.getInstance().getVehicleDynamicInfo(
-						result.getJSONObject(i).getString("vehicle_id"),
-						result.getJSONObject(i).getString("name"));
+			JSONArray items = respJson.getJSONArray("result");
+			for (int i = 0; i < items.length(); i++) {
+				JSONObject r = items.getJSONObject(i);
+				CarInfo info = new CarInfo(r.getString("vehicle_id"),
+						r.getString("name"), r.getDouble("lat"),
+						r.getDouble("lng"), 0);
 				cars.add(info);
 			}
 		} catch (JSONException e) {
@@ -74,16 +73,18 @@ public class WebService {
 		return cars;
 	}
 
-	public CarInfo getVehicleDynamicInfo(String vehicleId, String number)
-			throws ClientProtocolException, IOException, JSONException {
+	public synchronized CarInfo getVehicleDynamicInfo(String vehicleId,
+			String number) throws ClientProtocolException, IOException,
+			JSONException {
 		HttpGet httpget = new HttpGet(SERVER
 				+ "/get_vehicle_dynamic_info/?vehicle_id=" + vehicleId);
-
+		// Log.d(TAG, httpclient.toString());
 		HttpResponse response = httpclient.execute(httpget);
 		String dataAsString = getResponseAsString(response);
 		// Load the requested page converted to a string into a JSONObject.
 		JSONObject object = new JSONObject(dataAsString);
-		return new CarInfo(vehicleId,number, object.getDouble("lat"), object.getDouble("lng"), object.getInt("speed"));
+		return new CarInfo(vehicleId, number, object.getDouble("lat"),
+				object.getDouble("lng"), object.getInt("speed"));
 	}
 
 	private String getResponseAsString(HttpResponse response)

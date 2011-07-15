@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +16,20 @@ class CarListAdapter extends BaseAdapter {
 	private Activity activity;
 	private ArrayList<CarInfo> data = null;
 	private static LayoutInflater inflater = null;
+	private Handler handler = null;
 
 	public CarListAdapter(Activity a, ArrayList<CarInfo> d) {
 		activity = a;
 		data = d;
 		inflater = (LayoutInflater) activity
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		handler = new Handler();
 	}
 
 	public void setData(ArrayList<CarInfo> d) {
 		data = d;
 	}
-	
+
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View vi = convertView;
 		if (convertView == null) {
@@ -43,11 +46,13 @@ class CarListAdapter extends BaseAdapter {
 				numberView.setText(ci.getName());
 			}
 			if (locationView != null) {
-				locationView.setText("" + ci.getLat());
+				ci.obtainLocality(parent.getContext(), handler, locationView);
+				// locationView.setText(ci.getLocality(parent.getContext()));
 			}
 
 			if (statusView != null) {
-				statusView.setText(ci.getSpeed() + "km/h");
+				ci.obtainSpeed(handler, statusView);
+				//statusView.setText(ci.getSpeed() + "km/h");
 			}
 		}
 		return vi;
