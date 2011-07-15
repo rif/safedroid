@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/relativeLayout1"
+	android:layout_width="fill_parent" android:layout_height="?android:attr/listPreferredItemHeight"
+	android:padding="6dip" xmlns:android="http://schemas.android.com/apk/res/android">
+	<TextView android:id="@+id/carNumber" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+	<TextView android:id="@+id/carLocation" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_below="@id/carNumber" />
+	<TextView android:id="@+id/carStatus" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_toRightOf="@id/carNumber" />
+</RelativeLayout>

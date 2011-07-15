@@ -1,16 +1,18 @@
 package eu.safefleet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.util.Log;
 
@@ -46,21 +48,41 @@ public class WebService {
 		return response.getStatusLine().getStatusCode() == (RESPONSE_OK);
 	}
 
-	public List<String> getCars() throws ClientProtocolException, IOException {
-		HttpGet httpget = new HttpGet(SERVER + "/get_fleets/");
-
-		List<Cookie> cookies = httpclient.getCookieStore().getCookies();
-		if (!cookies.isEmpty()) {
-			Cookie c = cookies.get(0);
-			httpget.setHeader("Cookie", c.getName() + "=" + c.getValue());
-		}
+	public JSONArray getCars() throws ClientProtocolException, IOException {
+		HttpGet httpget = new HttpGet(SERVER + "/get_vehicles/");
 
 		HttpResponse response = httpclient.execute(httpget);
 		HttpEntity entity = response.getEntity();
 
+		// Pull content stream from response
+		InputStream inputStream = entity.getContent();
+
+		ByteArrayOutputStream content = new ByteArrayOutputStream();
+
+		// Read response into a buffered stream
+		int readBytes = 0;
+		byte[] sBuffer = new byte[512];
+		while ((readBytes = inputStream.read(sBuffer)) != -1) {
+			content.write(sBuffer, 0, readBytes);
+		}
+
+		// Return result from buffered stream
+		String dataAsString = new String(content.toByteArray());
+		// Load the requested page converted to a string into a JSONObject.
+		JSONArray result = null;
+		try {
+			JSONObject respJson = new JSONObject("{'result' :" + dataAsString
+					+ "}");
+
+			result = respJson.getJSONArray("result");
+			// Close the stream.
+			inputStream.close();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		if (entity != null) {
 			entity.consumeContent();
 		}
-		return new ArrayList<String>();
+		return result;
 	}
 }

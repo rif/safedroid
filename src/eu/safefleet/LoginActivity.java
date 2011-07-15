@@ -108,7 +108,7 @@ public class LoginActivity extends Activity {
 		}
 
 		HttpGet httpget = new HttpGet(
-				"http://portal.safefleet.eu/safefleet/webservice/get_companies/");
+				"http://portal.safefleet.eu/safefleet/webservice/get_vehicles/");
 
 		Cookie c = httpclient.getCookieStore().getCookies().get(0);
 		httpget.setHeader("Cookie", c.getName() + "=" + c.getValue());

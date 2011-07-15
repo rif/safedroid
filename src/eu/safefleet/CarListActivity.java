@@ -1,9 +1,9 @@
 package eu.safefleet;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
+import org.json.JSONArray;
 
 import utils.Dialogs;
 import android.app.ListActivity;
@@ -14,24 +14,20 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class CarListActivity extends ListActivity {
 	private Handler handler = null;
+	private CarListAdapter carListAdapter = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		String[] countries = getResources().getStringArray(
-				R.array.countries_array);
-		setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item,
-				countries));
-
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
-
+		carListAdapter = new CarListAdapter(CarListActivity.this, new JSONArray());
+		setListAdapter(carListAdapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -51,13 +47,21 @@ public class CarListActivity extends ListActivity {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
-					List<String> carList = WebService.getInstance().getCars();
-					if (carList.isEmpty()) {
+					final JSONArray carList = WebService.getInstance()
+							.getCars();
+					if (carList == null || carList.length() == 0) {
 						// connected to server but could not obtain result: must
 						// login
-						Intent mapIntent = new Intent(getApplicationContext(),
-								LoginActivity.class);
-						startActivity(mapIntent);
+						Intent loginIntent = new Intent(
+								getApplicationContext(), LoginActivity.class);
+						startActivity(loginIntent);
+					} else {
+						handler.post(new Runnable() {
+							public void run() {
+								carListAdapter.setData(carList);
+								carListAdapter.notifyDataSetChanged();
+							}
+						});
 					}
 				} catch (ClientProtocolException e) {
 					handler.post(new Runnable() {

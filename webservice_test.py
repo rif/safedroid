@@ -19,8 +19,9 @@ print '-'*100
 response,content = http.request("http://portal.safefleet.eu/safefleet/webservice/get_vehicles/", headers=headers)
 
 print "get_companies response:"
-print response
-print "\n".join(content.split("{"))
+arr =  json.loads(content)
+for obj in arr:
+	print obj
 print '-'*100
 
 # urllib2 opener test
