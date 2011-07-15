@@ -26,6 +26,7 @@ public class GoogleMapsActivity extends MapActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map);
 		MapView mapView = (MapView) findViewById(R.id.mapview);
+		mapView.getController().setZoom(18);
 		mapView.setBuiltInZoomControls(true);
 		List<Overlay> mapOverlays = mapView.getOverlays();
 		Drawable drawable = this.getResources().getDrawable(
@@ -42,7 +43,6 @@ public class GoogleMapsActivity extends MapActivity {
 			OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!",
 					vehicleName);
 			mapView.getController().setCenter(point);
-			mapView.getController().setZoom(1);
 			itemizedoverlay.setCarOverlay(overlayitem);
 			mapOverlays.add(itemizedoverlay);
 		} catch (ClientProtocolException e) {
