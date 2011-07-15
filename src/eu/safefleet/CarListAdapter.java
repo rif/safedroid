@@ -59,11 +59,11 @@ class CarListAdapter extends BaseAdapter {
 					numberView.setText(o.getString("name"));
 				}
 				if (locationView != null) {
-					locationView.setText("Location: " + o);
+					locationView.setText("Location: " + "Arad");
 				}
 
 				if (statusView != null) {
-					statusView.setText("Status: " + o);
+					statusView.setText("Status: " + "Parked");
 				}
 			}
 		} catch (JSONException e) {
