@@ -12,4 +12,6 @@
 	<string name="exit">Exit application</string>
 	<string name="retry">Retry</string>
 	<string name="remember">Remember me</string>
+	<string name="location">Location</string>
+	<string name="speed">Speed</string>
 </resources>

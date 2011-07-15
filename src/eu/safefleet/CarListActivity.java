@@ -1,9 +1,9 @@
 package eu.safefleet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.http.client.ClientProtocolException;
-import org.json.JSONArray;
 
 import utils.Dialogs;
 import android.app.ListActivity;
@@ -26,13 +26,17 @@ public class CarListActivity extends ListActivity {
 
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
-		carListAdapter = new CarListAdapter(CarListActivity.this, new JSONArray());
+		carListAdapter = new CarListAdapter(CarListActivity.this,
+				new ArrayList<CarInfo>());
 		setListAdapter(carListAdapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent mapIntent = new Intent(getApplicationContext(),
 						GoogleMapsActivity.class);
+				CarInfo ci = (CarInfo) carListAdapter.getItem(position);
+				mapIntent.putExtra("vehicle_id", ci.getId());
+				mapIntent.putExtra("vehicle_name", ci.getName());
 				startActivity(mapIntent);
 			}
 		});
@@ -47,9 +51,9 @@ public class CarListActivity extends ListActivity {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
-					final JSONArray carList = WebService.getInstance()
+					final ArrayList<CarInfo> carList = WebService.getInstance()
 							.getCars();
-					if (carList == null || carList.length() == 0) {
+					if (carList == null || carList.isEmpty()) {
 						// connected to server but could not obtain result: must
 						// login
 						Intent loginIntent = new Intent(

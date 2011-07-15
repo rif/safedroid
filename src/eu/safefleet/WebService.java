@@ -3,6 +3,7 @@ package eu.safefleet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,35 +49,45 @@ public class WebService {
 		return response.getStatusLine().getStatusCode() == (RESPONSE_OK);
 	}
 
-	public JSONArray getCars() throws ClientProtocolException, IOException {
+	public ArrayList<CarInfo> getCars() throws ClientProtocolException,
+			IOException {
 		HttpGet httpget = new HttpGet(SERVER + "/get_vehicles/");
 
 		HttpResponse response = httpclient.execute(httpget);
 		String dataAsString = getResponseAsString(response);
 		// Load the requested page converted to a string into a JSONObject.
-		JSONArray result = null;
+		ArrayList<CarInfo> cars = new ArrayList<CarInfo>();
 		try {
 			JSONObject respJson = new JSONObject("{'result' :" + dataAsString
 					+ "}");
 
-			result = respJson.getJSONArray("result");
+			JSONArray result = respJson.getJSONArray("result");
+			for (int i = 0; i < result.length(); i++) {
+				CarInfo info = WebService.getInstance().getVehicleDynamicInfo(
+						result.getJSONObject(i).getString("vehicle_id"),
+						result.getJSONObject(i).getString("name"));
+				cars.add(info);
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return cars;
 	}
 
-	public JSONObject get_vehicle_dynamic_info(String vehicleId)
+	public CarInfo getVehicleDynamicInfo(String vehicleId, String number)
 			throws ClientProtocolException, IOException, JSONException {
-		HttpGet httpget = new HttpGet(SERVER + "/get_vehicle_dynamic_info/?vehicle_id=" + vehicleId);
+		HttpGet httpget = new HttpGet(SERVER
+				+ "/get_vehicle_dynamic_info/?vehicle_id=" + vehicleId);
 
 		HttpResponse response = httpclient.execute(httpget);
 		String dataAsString = getResponseAsString(response);
 		// Load the requested page converted to a string into a JSONObject.
-		return new JSONObject(dataAsString);
+		JSONObject object = new JSONObject(dataAsString);
+		return new CarInfo(vehicleId,number, object.getDouble("lat"), object.getDouble("lng"), object.getInt("speed"));
 	}
-	
-	private String getResponseAsString(HttpResponse response) throws IOException{
+
+	private String getResponseAsString(HttpResponse response)
+			throws IOException {
 		HttpEntity entity = response.getEntity();
 
 		InputStream inputStream = entity.getContent();
@@ -91,7 +102,7 @@ public class WebService {
 		if (entity != null) {
 			entity.consumeContent();
 		}
-		
+
 		// Return result from buffered stream
 		return new String(content.toByteArray());
 	}

@@ -1,11 +1,6 @@
 package eu.safefleet;
 
-import java.io.IOException;
-
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,72 +13,55 @@ import android.widget.TextView;
 class CarListAdapter extends BaseAdapter {
 
 	private Activity activity;
-	private JSONArray data;
+	private ArrayList<CarInfo> data = null;
 	private static LayoutInflater inflater = null;
 
-	public CarListAdapter(Activity a, JSONArray d) {
+	public CarListAdapter(Activity a, ArrayList<CarInfo> d) {
 		activity = a;
 		data = d;
 		inflater = (LayoutInflater) activity
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
-	public int getCount() {
-		return data.length();
-	}
-
-	public Object getItem(int position) {
-		return position;
-	}
-
-	public long getItemId(int position) {
-		return position;
-	}
-	
-	public void setData(JSONArray d) {
+	public void setData(ArrayList<CarInfo> d) {
 		data = d;
 	}
-
+	
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View vi = convertView;
 		if (convertView == null) {
 			vi = inflater.inflate(R.layout.row, null);
 		}
-		try {
-			JSONObject o = data.getJSONObject(position);
-			if (o != null) {
-				TextView numberView = (TextView) vi
-						.findViewById(R.id.carNumber);
-				TextView locationView = (TextView) vi
-						.findViewById(R.id.carLocation);
-				TextView statusView = (TextView) vi
-						.findViewById(R.id.carStatus);
-				if (numberView != null) {
-					numberView.setText(o.getString("name"));
-				}
 
-				try {
-					JSONObject vehicle_dynamic_info = WebService.getInstance().get_vehicle_dynamic_info(o.getString("vehicle_id"));
-					if (locationView != null) {
-						locationView.setText("Location: " + vehicle_dynamic_info.getString("lat"));
-					}
-
-					if (statusView != null) {
-						statusView.setText("Speed: " + vehicle_dynamic_info.getString("speed") + "km/h");
-					}
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
+		CarInfo ci = data.get(position);
+		if (ci != null) {
+			TextView numberView = (TextView) vi.findViewById(R.id.carNumber);
+			TextView locationView = (TextView) vi
+					.findViewById(R.id.carLocation);
+			TextView statusView = (TextView) vi.findViewById(R.id.carSpeed);
+			if (numberView != null) {
+				numberView.setText(ci.getName());
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+			if (locationView != null) {
+				locationView.setText("" + ci.getLat());
+			}
+
+			if (statusView != null) {
+				statusView.setText(ci.getSpeed() + "km/h");
+			}
 		}
 		return vi;
+	}
+
+	public int getCount() {
+		return data.size();
+	}
+
+	public Object getItem(int position) {
+		return data.get(position);
+	}
+
+	public long getItemId(int position) {
+		return position;
 	}
 }
