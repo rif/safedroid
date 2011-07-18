@@ -9,7 +9,6 @@ import org.json.JSONException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -18,12 +17,14 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 public class GoogleMapsActivity extends MapActivity {
-	private static final String TAG = "GoogleMapsActivity"; 
+	// private static final String TAG = "GoogleMapsActivity";
 	private static final int ZOOM_LEVEL = 16;
 	private Handler handler = null;
 	private MapView mapView = null;
 	private List<Overlay> mapOverlays = null;
 	private CarsOverlay itemizedoverlay = null;
+	private String vehicleId = null;
+	private String vehicleName = null;
 
 	@Override
 	protected boolean isRouteDisplayed() {
@@ -39,27 +40,30 @@ public class GoogleMapsActivity extends MapActivity {
 		mapView.getController().setZoom(ZOOM_LEVEL);
 		mapView.setBuiltInZoomControls(true);
 		mapOverlays = mapView.getOverlays();
-		Drawable drawable = GoogleMapsActivity.this.getResources()
-				.getDrawable(R.drawable.androidmarker);
-		 itemizedoverlay = new CarsOverlay(drawable,
-				GoogleMapsActivity.this);
-		handler.postDelayed(mUpdateTimeTask, 1);
+		Drawable drawable = GoogleMapsActivity.this.getResources().getDrawable(
+				R.drawable.androidmarker);
+		itemizedoverlay = new CarsOverlay(drawable, GoogleMapsActivity.this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		handler.removeCallbacks(mUpdateTimeTask);
+		vehicleId = getIntent().getExtras().getString("vehicle_id");
+		vehicleName = getIntent().getExtras().getString("vehicle_name");
+		handler.post(mUpdateTimeTask);
 	}
 
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-			Log.d(TAG, "xxxxxxxxxxxxxxxxxxx");
 			mapOverlays.clear();
-			String vehicleId = getIntent().getExtras().getString("vehicle_id");
-			String vehicleName = getIntent().getExtras().getString(
-					"vehicle_name");
 			try {
 				CarInfo carInfo = WebService.getInstance()
 						.getVehicleDynamicInfo(vehicleId, vehicleName);
 				GeoPoint point = new GeoPoint((int) (carInfo.getLat() * 1E6),
 						(int) (carInfo.getLng() * 1E6));
-				OverlayItem overlayitem = new OverlayItem(point,
-						"Hola, Mundo!", vehicleName);
+				OverlayItem overlayitem = new OverlayItem(point, vehicleName
+						+ ":", "Hola, Mundo!");
 				mapView.getController().setCenter(point);
 				itemizedoverlay.setCarOverlay(overlayitem);
 				mapOverlays.add(itemizedoverlay);
