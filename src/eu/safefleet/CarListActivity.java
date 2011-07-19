@@ -57,6 +57,8 @@ public class CarListActivity extends ListActivity {
 			Log.d(TAG, "updating!");
 			counter = COUNTER_MAX;			
 			new Thread(carUpdaterRunnable).start();
+		} else {
+			carListAdapter.notifyDataSetChanged();
 		}
 	}
 

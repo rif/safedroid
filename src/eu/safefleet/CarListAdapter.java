@@ -52,7 +52,7 @@ class CarListAdapter extends BaseAdapter {
 
 			if (statusView != null) {
 				ci.obtainSpeed(handler, statusView);
-				//statusView.setText(ci.getSpeed() + "km/h");
+				// statusView.setText(ci.getSpeed() + "km/h");
 			}
 		}
 		return vi;

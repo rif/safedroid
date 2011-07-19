@@ -115,4 +115,10 @@ public class CarInfo {
 			}
 		}.start();
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 }
