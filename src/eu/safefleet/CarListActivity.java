@@ -31,8 +31,7 @@ public class CarListActivity extends ListActivity {
 
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
-		carListAdapter = new CarListAdapter(CarListActivity.this,
-				new ArrayList<CarInfo>());
+		carListAdapter = new CarListAdapter(this, new ArrayList<CarInfo>());
 		setListAdapter(carListAdapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -51,17 +50,18 @@ public class CarListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		dialog = ProgressDialog.show(CarListActivity.this, "", "Loading. Please wait...", true);
+		
 		Log.d(TAG, "counter: " + counter);
 		if (counter-- == 0 || carListAdapter.isEmpty()) {
+			dialog = ProgressDialog.show(CarListActivity.this, "", "Loading. Please wait...", true);
 			Log.d(TAG, "updating!");
-			counter = COUNTER_MAX;
+			counter = COUNTER_MAX;			
 			new Thread(carUpdaterRunnable).start();
 		}
 	}
 
 	private Runnable carUpdaterRunnable = new Runnable() {
-		public void run() {			
+		public void run() {				
 			try {				
 				final ArrayList<CarInfo> carList = WebService.getInstance()
 						.getCars();

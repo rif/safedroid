@@ -9,6 +9,7 @@ import org.json.JSONException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -17,8 +18,9 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 public class GoogleMapsActivity extends MapActivity {
-	// private static final String TAG = "GoogleMapsActivity";
+	private static final String TAG = "GoogleMapsActivity";
 	private static final int ZOOM_LEVEL = 16;
+	private static final int UPDATE_INTERVAL =  60 * 1000; // 1 minute
 	private Handler handler = null;
 	private MapView mapView = null;
 	private List<Overlay> mapOverlays = null;
@@ -47,11 +49,16 @@ public class GoogleMapsActivity extends MapActivity {
 
 	@Override
 	protected void onResume() {
-		super.onResume();
-		handler.removeCallbacks(mUpdateTimeTask);
+		super.onResume();		
 		vehicleId = getIntent().getExtras().getString("vehicle_id");
-		vehicleName = getIntent().getExtras().getString("vehicle_name");
+		vehicleName = getIntent().getExtras().getString("vehicle_name");		
 		handler.post(mUpdateTimeTask);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		handler.removeCallbacks(mUpdateTimeTask);
 	}
 
 	private Runnable mUpdateTimeTask = new Runnable() {
@@ -60,6 +67,7 @@ public class GoogleMapsActivity extends MapActivity {
 			try {
 				CarInfo carInfo = WebService.getInstance()
 						.getVehicleDynamicInfo(vehicleId, vehicleName);
+				Log.d(TAG, "updating... " + carInfo.getLat() + " : " + carInfo.getLng());
 				GeoPoint point = new GeoPoint((int) (carInfo.getLat() * 1E6),
 						(int) (carInfo.getLng() * 1E6));
 				OverlayItem overlayitem = new OverlayItem(point, vehicleName
@@ -78,7 +86,8 @@ public class GoogleMapsActivity extends MapActivity {
 				e.printStackTrace();
 			}
 
-			handler.postDelayed(this, 60 * 1000);
+			handler.postDelayed(this, UPDATE_INTERVAL);
+			Log.d(TAG, handler.toString());
 		}
 	};
 }

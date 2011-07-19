@@ -77,7 +77,7 @@ public class CarInfo {
 
 					handler.post(new Runnable() {
 						public void run() {
-							label.setText("" + carInfo.speed);
+							label.setText(carInfo.speed + " km/h");
 						}
 					});
 				} catch (IOException e) {
