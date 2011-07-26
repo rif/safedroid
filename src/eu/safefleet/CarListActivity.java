@@ -11,19 +11,19 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class CarListActivity extends ListActivity {
-	private static final String TAG = "ListActivity";
-	private static int COUNTER_MAX = 10;
+	//private static final String TAG = "ListActivity";
 	private Handler handler = null;
 	private CarListAdapter carListAdapter = null;
 	private ProgressDialog dialog = null;
-	private int counter = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,12 +50,9 @@ public class CarListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		Log.d(TAG, "counter: " + counter);
-		if (counter-- == 0 || carListAdapter.isEmpty()) {
-			dialog = ProgressDialog.show(CarListActivity.this, "", "Loading. Please wait...", true);
-			Log.d(TAG, "updating!");
-			counter = COUNTER_MAX;			
+		if (carListAdapter.isEmpty()) {
+			dialog = ProgressDialog.show(CarListActivity.this, "",
+					"Loading. Please wait...", true);
 			new Thread(carUpdaterRunnable).start();
 		} else {
 			carListAdapter.notifyDataSetChanged();
@@ -63,8 +60,8 @@ public class CarListActivity extends ListActivity {
 	}
 
 	private Runnable carUpdaterRunnable = new Runnable() {
-		public void run() {				
-			try {				
+		public void run() {
+			try {
 				final ArrayList<CarInfo> carList = WebService.getInstance()
 						.getCars();
 				if (carList == null || carList.isEmpty()) {
@@ -104,4 +101,28 @@ public class CarListActivity extends ListActivity {
 			});
 		}
 	};
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.cars_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.reload_cars:
+			dialog = ProgressDialog.show(CarListActivity.this, "",
+					"Loading. Please wait...", true);
+			new Thread(carUpdaterRunnable).start();
+			return true;
+		case R.id.exit:
+			moveTaskToBack(true);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 }

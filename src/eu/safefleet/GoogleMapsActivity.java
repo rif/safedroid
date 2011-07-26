@@ -41,6 +41,7 @@ public class GoogleMapsActivity extends MapActivity {
 		mapView = (MapView) findViewById(R.id.mapview);
 		mapView.getController().setZoom(ZOOM_LEVEL);
 		mapView.setBuiltInZoomControls(true);
+		mapView.setTraffic(true);	
 		mapOverlays = mapView.getOverlays();
 		Drawable drawable = GoogleMapsActivity.this.getResources().getDrawable(
 				R.drawable.androidmarker);
