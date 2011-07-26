@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -40,7 +41,7 @@ public class LoginActivity extends Activity {
 		SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 		String username = pref.getString(PREF_USERNAME, null);
 		String password = pref.getString(PREF_PASSWORD, null);
-		boolean checked= pref.getBoolean(PREF_REMEMBER, false);
+		boolean checked = pref.getBoolean(PREF_REMEMBER, false);
 
 		if (username != null) {
 			userEdit.setText(username);
@@ -53,21 +54,22 @@ public class LoginActivity extends Activity {
 
 		loginButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				
-					boolean success;
-					try {
-						success = WebService.getInstance().login(
-								userEdit.getText().toString(),
-								passwordEdit.getText().toString());
-						resultText.setText(success?R.string.loginsuccessful:R.string.loginfailed);
-						if (success){
-							finish();
-						}
-					} catch (ClientProtocolException e) {
-						resultText.setText(R.string.servererror);
-					} catch (IOException e) {
-						resultText.setText(R.string.nointernet);
+
+				boolean success;
+				try {
+					success = WebService.getInstance().login(
+							userEdit.getText().toString(),
+							passwordEdit.getText().toString());
+					resultText.setText(success ? R.string.loginsuccessful
+							: R.string.loginfailed);
+					if (success) {
+						finish();
 					}
+				} catch (ClientProtocolException e) {
+					resultText.setText(R.string.servererror);
+				} catch (IOException e) {
+					resultText.setText(R.string.nointernet);
+				}
 				saveCredentials();
 			}
 		});
@@ -80,14 +82,21 @@ public class LoginActivity extends Activity {
 					.edit()
 					.putString(PREF_USERNAME, userEdit.getText().toString())
 					.putString(PREF_PASSWORD, passwordEdit.getText().toString())
-					.putBoolean(PREF_REMEMBER, true)
-					.commit();
+					.putBoolean(PREF_REMEMBER, true).commit();
 		} else {
 			Log.d(TAG, "Clearing credential");
 			getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
 					.putString(PREF_USERNAME, "").putString(PREF_PASSWORD, "")
-					.putBoolean(PREF_REMEMBER, false)
-					.commit();
+					.putBoolean(PREF_REMEMBER, false).commit();
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			moveTaskToBack(true);
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }
