@@ -35,8 +35,3 @@ print '-'*100
 
 print "Total: %d vehicles." % count
 
-# urllib2 opener test
-#import urllib2
-#opener = urllib2.build_opener()
-#opener.addheaders.append(('Cookie', cookie))
-#f = opener.open("http://portal.safefleet.eu/safefleet/webservice/get_companies/")
