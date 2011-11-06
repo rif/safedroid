@@ -106,7 +106,8 @@ public class CarInfo {
 				final String locality = addresses != null ? addresses.get(0)
 						.getLocality() : "N/A";
 
-				final String finalLocality = (locality== null || locality.equals("")) ? "N/A" : locality;
+				final String finalLocality = (locality == null || locality
+						.equals("")) ? "N/A" : locality;
 				handler.post(new Runnable() {
 					public void run() {
 						label.setText(finalLocality);
@@ -120,5 +121,5 @@ public class CarInfo {
 	public String toString() {
 		return name;
 	}
-	
+
 }

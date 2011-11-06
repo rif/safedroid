@@ -3,27 +3,54 @@ package eu.safefleet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class WebService {
-	//private static final String TAG = "WebService";
-	private static final String SERVER = "http://portal.safefleet.eu/safefleet/webservice";
+	private static final String TAG = "WebService";
+	private static final String SERVER = "https://portal.safefleet.eu/safefleet/webservice";
 	public static final int RESPONSE_OK = 200;
-	private DefaultHttpClient httpclient = null;
+	private HttpClient httpclient = null;
 	private static WebService instance = null;
 
 	private WebService() {
-		httpclient = new DefaultHttpClient();
+		httpclient = getNewHttpClient();
 	}
 
 	public static WebService getInstance() {
@@ -33,8 +60,36 @@ public class WebService {
 		return instance;
 	}
 
+	public HttpClient getNewHttpClient() {
+		try {
+			KeyStore trustStore = KeyStore.getInstance(KeyStore
+					.getDefaultType());
+			trustStore.load(null, null);
+
+			SSLSocketFactory sf = new PermissiveSSLSocketFactory(trustStore);
+			sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+			HttpParams params = new BasicHttpParams();
+			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+			HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+
+			SchemeRegistry registry = new SchemeRegistry();
+			registry.register(new Scheme("http", PlainSocketFactory
+					.getSocketFactory(), 80));
+			registry.register(new Scheme("https", sf, 443));
+
+			ClientConnectionManager ccm = new ThreadSafeClientConnManager(
+					params, registry);
+
+			return new DefaultHttpClient(ccm, params);
+		} catch (Exception e) {
+			return new DefaultHttpClient();
+		}
+	}
+
 	public boolean login(String user, String pass)
 			throws ClientProtocolException, IOException {
+		Log.d(TAG, "Starting login!");
 		HttpPost httpost = new HttpPost(SERVER + "/authenticate/?username="
 				+ user + "&password=" + pass);
 		HttpResponse response = httpclient.execute(httpost);
@@ -43,15 +98,16 @@ public class WebService {
 		if (entity != null) {
 			entity.consumeContent();
 		}
-		// Log.d(TAG, response.getStatusLine().toString());
+		Log.d(TAG, response.getStatusLine().toString());
 		return response.getStatusLine().getStatusCode() == (RESPONSE_OK);
 	}
 
 	public ArrayList<CarInfo> getCars() throws ClientProtocolException,
 			IOException {
 		HttpGet httpget = new HttpGet(SERVER + "/get_vehicles/");
-
+		Log.d(TAG, "before get");
 		HttpResponse response = httpclient.execute(httpget);
+		Log.d(TAG, "after get");
 		String dataAsString = getResponseAsString(response);
 		// Load the requested page converted to a string into a JSONObject.
 		ArrayList<CarInfo> cars = new ArrayList<CarInfo>();
@@ -106,5 +162,43 @@ public class WebService {
 
 		// Return result from buffered stream
 		return new String(content.toByteArray());
+	}
+}
+
+final class PermissiveSSLSocketFactory extends SSLSocketFactory {
+	SSLContext sslContext = SSLContext.getInstance("TLS");
+
+	public PermissiveSSLSocketFactory(KeyStore truststore)
+			throws NoSuchAlgorithmException, KeyManagementException,
+			KeyStoreException, UnrecoverableKeyException {
+		super(truststore);
+
+		TrustManager tm = new X509TrustManager() {
+			public void checkClientTrusted(X509Certificate[] chain,
+					String authType) throws CertificateException {
+			}
+
+			public void checkServerTrusted(X509Certificate[] chain,
+					String authType) throws CertificateException {
+			}
+
+			public X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+		};
+
+		sslContext.init(null, new TrustManager[] { tm }, null);
+	}
+
+	@Override
+	public Socket createSocket(Socket socket, String host, int port,
+			boolean autoClose) throws IOException, UnknownHostException {
+		return sslContext.getSocketFactory().createSocket(socket, host, port,
+				autoClose);
+	}
+
+	@Override
+	public Socket createSocket() throws IOException {
+		return sslContext.getSocketFactory().createSocket();
 	}
 }
