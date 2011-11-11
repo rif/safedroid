@@ -5,7 +5,7 @@ import sys
 USER = sys.argv[1] if len(sys.argv) == 3 else 'safefleet'
 PASSWORD = sys.argv[2] if len(sys.argv) == 3 else 'x700'
 
-http = httplib2.Http()
+http = httplib2.Http(disable_ssl_certificate_validation=True)
 response,content = http.request("https://portal.safefleet.eu/safefleet/webservice/authenticate/?username=%(user)s&password=%(pass)s" % {'user': USER, 'pass': PASSWORD}, 'POST')
 
 #http = httplib2.Http(".cache")

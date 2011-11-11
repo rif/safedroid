@@ -40,10 +40,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 public class WebService {
-	private static final String TAG = "WebService";
+	//private static final String TAG = "WebService";
 	private static final String SERVER = "https://portal.safefleet.eu/safefleet/webservice";
 	public static final int RESPONSE_OK = 200;
 	private HttpClient httpclient = null;
@@ -88,8 +86,7 @@ public class WebService {
 	}
 
 	public boolean login(String user, String pass)
-			throws ClientProtocolException, IOException {
-		Log.d(TAG, "Starting login!");
+			throws ClientProtocolException, IOException {		
 		HttpPost httpost = new HttpPost(SERVER + "/authenticate/?username="
 				+ user + "&password=" + pass);
 		HttpResponse response = httpclient.execute(httpost);
@@ -97,17 +94,14 @@ public class WebService {
 
 		if (entity != null) {
 			entity.consumeContent();
-		}
-		Log.d(TAG, response.getStatusLine().toString());
+		}		
 		return response.getStatusLine().getStatusCode() == (RESPONSE_OK);
 	}
 
 	public ArrayList<CarInfo> getCars() throws ClientProtocolException,
 			IOException {
-		HttpGet httpget = new HttpGet(SERVER + "/get_vehicles/");
-		Log.d(TAG, "before get");
-		HttpResponse response = httpclient.execute(httpget);
-		Log.d(TAG, "after get");
+		HttpGet httpget = new HttpGet(SERVER + "/get_vehicles/");		
+		HttpResponse response = httpclient.execute(httpget);		
 		String dataAsString = getResponseAsString(response);
 		// Load the requested page converted to a string into a JSONObject.
 		ArrayList<CarInfo> cars = new ArrayList<CarInfo>();

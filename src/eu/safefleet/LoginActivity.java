@@ -7,7 +7,6 @@ import org.apache.http.client.ClientProtocolException;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginActivity extends Activity {
-	private static final String TAG = "LoginActivity";
+	//private static final String TAG = "LoginActivity";
 	public static final String PREFS_NAME = "SafeDroidPrefs";
 	private static final String PREF_USERNAME = "username";
 	private static final String PREF_PASSWORD = "password";
@@ -56,8 +55,7 @@ public class LoginActivity extends Activity {
 			public void onClick(View v) {
 
 				boolean success;
-				try {
-					Log.d(TAG, "Start stuff");
+				try {					
 					success = WebService.getInstance().login(
 							userEdit.getText().toString(),
 							passwordEdit.getText().toString());

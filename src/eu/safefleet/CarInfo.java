@@ -103,7 +103,7 @@ public class CarInfo {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				final String locality = addresses != null ? addresses.get(0)
+				final String locality = addresses != null && addresses.size() > 0? addresses.get(0)
 						.getLocality() : "N/A";
 
 				final String finalLocality = (locality == null || locality
