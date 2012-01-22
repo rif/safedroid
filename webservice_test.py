@@ -8,12 +8,6 @@ PASSWORD = sys.argv[2] if len(sys.argv) == 3 else 'x700'
 http = httplib2.Http(disable_ssl_certificate_validation=True)
 response,content = http.request("https://portal.safefleet.eu/safefleet/webservice/authenticate/?username=%(user)s&password=%(pass)s" % {'user': USER, 'pass': PASSWORD}, 'POST')
 
-#http = httplib2.Http(".cache")
-#http.add_credentials('safefleet', 'x700')
-#resp, content = http.request("https://portal.safefleet.eu/safefleet/webservice/authenticate/", 
-#    "PUT", body="This is text", 
-#    headers={'content-type':'text/plain'} )
-
 print "Athentication response:"
 print response
 print '-'*100

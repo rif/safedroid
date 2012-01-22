@@ -20,7 +20,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class CarListActivity extends ListActivity {
-	// private static final String TAG = "ListActivity";
+	//private static final String TAG = "ListActivity";
 	private Handler handler = null;
 	private CarListAdapter carListAdapter = null;
 	private ProgressDialog dialog = null;
@@ -81,7 +81,7 @@ public class CarListActivity extends ListActivity {
 			} catch (ClientProtocolException e) {
 				handler.post(new Runnable() {
 					public void run() {
-						Dialogs.showExitRety(CarListActivity.this,
+						Dialogs.showExit(CarListActivity.this,
 								R.string.servererror);
 					}
 				});
@@ -89,7 +89,7 @@ public class CarListActivity extends ListActivity {
 			} catch (IOException e) {
 				handler.post(new Runnable() {
 					public void run() {
-						Dialogs.showExitRety(CarListActivity.this,
+						Dialogs.showExit(CarListActivity.this,
 								R.string.nointernet);
 					}
 				});
@@ -124,5 +124,5 @@ public class CarListActivity extends ListActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-	}
+	}		
 }
