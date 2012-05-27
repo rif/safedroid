@@ -11,7 +11,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,7 +20,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class CarListActivity extends ListActivity {
-	private static final String TAG = "ListActivity";
+	//private static final String TAG = "ListActivity";
 	private Handler handler = null;
 	private CarListAdapter carListAdapter = null;
 	private ProgressDialog dialog = null;
@@ -82,16 +81,15 @@ public class CarListActivity extends ListActivity {
 			} catch (ClientProtocolException e) {
 				handler.post(new Runnable() {
 					public void run() {
-						Dialogs.showExitRety(CarListActivity.this,
+						Dialogs.showExit(CarListActivity.this,
 								R.string.servererror);
 					}
 				});
 
 			} catch (IOException e) {
-				Log.d(TAG, e.getMessage());
 				handler.post(new Runnable() {
-					public void run() {						
-						Dialogs.showExitRety(CarListActivity.this,
+					public void run() {
+						Dialogs.showExit(CarListActivity.this,
 								R.string.nointernet);
 					}
 				});
@@ -126,5 +124,5 @@ public class CarListActivity extends ListActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-	}
+	}		
 }

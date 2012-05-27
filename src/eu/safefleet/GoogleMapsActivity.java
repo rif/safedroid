@@ -76,7 +76,7 @@ public class GoogleMapsActivity extends MapActivity {
 				itemizedoverlay.setCarOverlay(overlayitem);
 				mapOverlays.add(itemizedoverlay);
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

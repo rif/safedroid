@@ -7,7 +7,7 @@ import android.content.DialogInterface;
 import eu.safefleet.R;
 
 public class Dialogs {
-	public static void showExitRety(final Context context, final int messageId) {
+	public static void showExit(final Context context, final int messageId) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setMessage(messageId)
 				.setCancelable(false)
@@ -15,12 +15,6 @@ public class Dialogs {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								((Activity) context).finish();
-							}
-						})
-				.setNegativeButton(R.string.retry,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
 							}
 						});
 		AlertDialog alert = builder.create();
